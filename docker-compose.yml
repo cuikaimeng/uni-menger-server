@@ -1,0 +1,33 @@
+services:
+  # 数据库服务
+  mysql:
+    image: mysql:8.0
+    container_name: mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: 123456  # 数据库密码
+      MYSQL_DATABASE: menger       # 数据库名
+    ports:
+      - "3306:3306"
+    networks:
+      - my-docker-net
+    volumes:
+      - /Users/cuikaimeng/mysql:/var/lib/mysql  # 映射本机mysql数据
+
+  # Node.js 应用服务
+  node-app:
+    build: .             # 指向当前目录的 Dockerfile 进行构建
+    container_name: node-app
+    restart: always
+    ports:
+      - "3000:3000"      # 宿主机端口:容器端口
+    depends_on:
+      - mysql               # 确保数据库先启动
+    networks:
+      - my-docker-net
+    environment:
+      DB_HOST: mysql        # 注意：这里直接填上面的服务名 'mysql'
+
+networks:
+  my-docker-net:           # 自动创建一个内部虚拟网络
+    driver: bridge

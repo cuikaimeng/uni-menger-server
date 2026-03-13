@@ -10,3 +10,6 @@
 ```javascript
 	pnpm run start
 ```
+
+### docker更新部署
+docker-compose up -d
