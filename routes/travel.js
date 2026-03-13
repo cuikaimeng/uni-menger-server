@@ -55,22 +55,35 @@ const sql = {
 	travel_update: `
 		UPDATE travel
 		SET travel_title = ?, 
-				travel_content = ?,
-				travel_start_date = ?,
-				travel_end_date = ?,
-				travel_province_code = ?,
-				travel_province_name = ?,
-				travel_city_code = ?,
-				travel_city_name = ?,
-				travel_attraction = ?,
-				travel_image = ?,
-				travel_update_time = ?
+			travel_content = ?,
+			travel_start_date = ?,
+			travel_end_date = ?,
+			travel_province_code = ?,
+			travel_province_name = ?,
+			travel_city_code = ?,
+			travel_city_name = ?,
+			travel_attraction = ?,
+			travel_image = ?,
+			travel_update_time = ?
 		WHERE id = ?
 	`,
 	travel_delete: `
 		DELETE FROM travel 
 		WHERE id = ?;
 	`,
+	travel_map_province: `
+		SELECT DISTINCT 
+	        travel_province_code, 
+			travel_province_name 
+	    FROM travel
+	`,
+	travel_map_city: `
+		SELECT DISTINCT 
+	        travel_city_code, 
+			travel_city_name 
+	    FROM travel 
+		WHERE travel_province_code = ?
+	`
 }
 
 /**
@@ -193,6 +206,38 @@ router.delete("/delete/:id", async (req, res) => {
 	}
 });
 
+/**
+ * 路数地图数据
+ */
+router.get("/map", async (req, res) => {
+	// 从请求体 body 中获取参数
+	const { code } = req.body; 
+	try {
+		let sql = "";
+		let params = [];
 
+		if (code === 'china') {
+			// 1. 当参数为 'china' 时，查询所有省份编码和名称（去重）
+			sql = sql.travel_map_province;
+		} else if (code) {
+			// 2. 当参数为具体的省份编码时，查询该省份下的所有城市（去重）
+			sql = sql.travel_map_city;
+			params = [code];
+		} else {
+			return res.status(400).json({ code: 400, msg: "参数 code 不能为空" });
+		}
+		
+		const [result] = await pool.query(sql, params);
+		res.json({
+			success: true,
+			message: "查询成功",
+			data: result,
+		});
+	} catch (error) {
+		res.status(500).json({
+			error: error.message
+		});
+	}
+});
 
 export default router;
