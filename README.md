@@ -12,4 +12,4 @@
 ```
 
 ### docker更新部署
-docker-compose up -d
+docker-compose up -d --build

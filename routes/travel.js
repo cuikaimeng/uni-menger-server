@@ -209,25 +209,25 @@ router.delete("/delete/:id", async (req, res) => {
 /**
  * 路数地图数据
  */
-router.get("/map", async (req, res) => {
+router.post("/map", async (req, res) => {
 	// 从请求体 body 中获取参数
 	const { code } = req.body; 
 	try {
-		let sql = "";
+		let mapSql = "";
 		let params = [];
-
+		console.log('路数请求参数', code)
 		if (code === 'china') {
 			// 1. 当参数为 'china' 时，查询所有省份编码和名称（去重）
-			sql = sql.travel_map_province;
+			mapSql = sql.travel_map_province;
 		} else if (code) {
 			// 2. 当参数为具体的省份编码时，查询该省份下的所有城市（去重）
-			sql = sql.travel_map_city;
+			mapSql = sql.travel_map_city;
 			params = [code];
 		} else {
 			return res.status(400).json({ code: 400, msg: "参数 code 不能为空" });
 		}
-		
-		const [result] = await pool.query(sql, params);
+		console.log('打印sql', mapSql)
+		const [result] = await pool.query(mapSql, params);
 		res.json({
 			success: true,
 			message: "查询成功",
