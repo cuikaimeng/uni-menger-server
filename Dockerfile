@@ -1,11 +1,11 @@
-# 1. 指定 Node.js 22.22.0 版本
-FROM node:22.22.0-alpine
+# 1. 指定 Node.js 版本
+FROM node:22.22-alpine
 
 # 2. 设置容器内的工作目录
 WORKDIR /app
 
 # 3. 安装 pnpm 并复制依赖文件
-# 你的 package.json 中列出了 pnpm，建议在构建阶段安装它
+RUN npm config set registry https://registry.npmmirror.com
 RUN npm install -g pnpm
 
 COPY package.json pnpm-lock.yaml* ./
