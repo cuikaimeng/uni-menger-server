@@ -31,10 +31,9 @@ const sql = {
 			travel_attraction,
 			travel_image,
 			travel_update_time,
-			travel_update_user,
+			travel_update_user
 		FROM travel
-		WHERE id = ?
-		ORDER BY travel_update_time DESC;
+		WHERE id = ?;
 	`,
 	travel_add: `
 		INSERT INTO travel (
@@ -108,9 +107,9 @@ router.post("/list", async (req, res) => {
 /**
  * 查询路书详细数据
  *  */
-router.get("/detail", async (req, res) => {
+router.post("/detail/:id", async (req, res) => {
 	try {
-		const [result] = await pool.query(sql.travel_detail);
+		const [result] = await pool.query(sql.travel_detail, [req.params.id]);
 		res.json({
 			success: true,
 			message: "查询成功",
