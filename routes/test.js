@@ -3,21 +3,18 @@ import {
 } from "express";
 import {
 	pool
-} from "../mysql.js";
+} from "../postgresql.js";
 import {
 	authenticateToken
 } from '../utils/token.js'
 
 const router = Router();
-router.use(authenticateToken); // 开发阶段先注释，跳过token验证
+router.use(authenticateToken);
 
 const sql = {
-	test_add: `INSERT INTO test (name) VALUES (?)`,
+	test_add: `INSERT INTO test (name) VALUES ($1)`
 }
 
-/**
- * 新增任务
- *  */
 router.post("/add", async (req, res) => {
 	try {
 		const result = await pool.query(sql.test_add, [
@@ -27,7 +24,7 @@ router.post("/add", async (req, res) => {
 			success: true,
 			message: "新增成功",
 			data: {
-				insertId: result[0].insertId
+				insertId: result.rows[0]?.insertId || result.rowCount
 			},
 		});
 	} catch (error) {

@@ -16,6 +16,7 @@
 		"http-errors": "~1.6.3",
 		"morgan": "~1.9.1",
 		"mysql2": "^3.14.3",
+		"pg": "^8.21.0",
 		"pnpm": "^10.31.0"
 	},
 	"devDependencies": {
